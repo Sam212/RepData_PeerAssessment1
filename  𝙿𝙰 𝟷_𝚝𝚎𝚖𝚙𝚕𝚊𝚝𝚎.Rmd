@@ -1,0 +1,87 @@
+---
+title: "Assignment1"
+author: "Ed"
+date: "April 23, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Assignment 1
+
+
+
+We are investigating a data set that represents data taken from body sensing machines 
+
+```{r read file}
+#Read file and chage the date column to date
+activity <- read.csv("activity.csv")
+
+
+
+
+#Trnasform the data column into 
+activity$date <- as.Date(activity$date)
+
+
+#Calculate the total number of steps taken everyday
+actitvityGoupby <- aggregate(steps ~ date, data = activity, FUN = sum)
+
+#Calculate the mean and median of total number of steps taken each day
+actitvityMean <- aggregate(steps ~ date, data = activity, FUN = mean)
+actitvityMean
+#Calculate the median of total nmber of steps taken each day 
+actitvityMedian <- aggregate(steps ~ date, data = activity, FUN = median)
+actitvityMedian
+#Plot the total number of steps taken each day using a histigram 
+hist(actitvityGoupby$steps,main = "Steps Distribution",xlab  = "Steps",breaks = 60)
+
+#Aggregate average steps by interval 
+stepsByinterval <- aggregate(steps ~ interval, data = activity, FUN = mean)
+
+#Plot a time series of the average steps taken per interval 
+plot(stepsByinterval$interval,stepsByinterval$steps, type = "l",xlab = "Interval", ylab = "Steps",main = "Average Steps Per Interval")
+
+ # Calculate the 5-minute interval that on average across all the days in the dataset, contains the maximum number of steps.
+stepsByinterval[order(stepsByinterval$steps,decreasing = T),]$steps[1]
+
+#Total number of rows with NAs
+sum(is.na(activity$steps))
+
+#Assign activity to a new variable from which 
+actNAremoved <- activity
+
+#Replace NAs with 0 to avoid causing bias by NA values
+actNAremoved[is.na(actNAremoved)] <- 0
+
+#Total number of steps taken each day 
+NAremovedSum <- aggregate(steps ~ date , data = actNAremoved, FUN = sum)
+
+#Histogram if the new data set
+hist(NAremovedSum$steps,breaks = 53 )
+
+#Mean of the mumber of steps taken each day 
+meanNona <-  aggregate(steps ~ date, data = actNAremoved, FUN = mean)
+meanNona
+
+#Median of the mumber of steps taken each day
+medianNona <-  aggregate(steps ~ date, data = actNAremoved, FUN = median)
+medianNona
+
+#Assign a factor variable to the dataset
+for (i in 1:length(actNAremoved$date)){
+ if (weekdays(actNAremoved$date[i]) %in% c("Monday","Tuesday","Wednesday","Thursday","Friday")){
+ actNAremoved$WeekDayEnd[i] <- "Weekday"  
+ } else{  actNAremoved$WeekDayEnd[i] <- "Weekend" }}  
+
+#Aggregate the data set by interval and weekday/end then plot
+library(lattice)
+naAgg <- aggregate(steps ~ interval + WeekDayEnd, data = actNAremoved, FUN = mean)
+xyplot(naAgg$steps ~ naAgg$interval | naAgg$WeekDayEnd,layout = c(1,2),type = "l")
+
+```{r pressure, echo= T } 
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
