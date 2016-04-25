@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 ```
 
 ## Assignment 1
@@ -37,12 +38,16 @@ actitvityMedian <- aggregate(steps ~ date, data = activity, FUN = median)
 actitvityMedian
 #Plot the total number of steps taken each day using a histigram 
 hist(actitvityGoupby$steps,main = "Steps Distribution",xlab  = "Steps",breaks = 60)
+dev.copy(png,"hist1")
+dev.off()
 
 #Aggregate average steps by interval 
 stepsByinterval <- aggregate(steps ~ interval, data = activity, FUN = mean)
 
 #Plot a time series of the average steps taken per interval 
 plot(stepsByinterval$interval,stepsByinterval$steps, type = "l",xlab = "Interval", ylab = "Steps",main = "Average Steps Per Interval")
+dev.copy(png,"plot1")
+dev.off()
 
  # Calculate the 5-minute interval that on average across all the days in the dataset, contains the maximum number of steps.
 stepsByinterval[order(stepsByinterval$steps,decreasing = T),]$steps[1]
@@ -61,6 +66,8 @@ NAremovedSum <- aggregate(steps ~ date , data = actNAremoved, FUN = sum)
 
 #Histogram if the new data set
 hist(NAremovedSum$steps,breaks = 53 )
+dev.copy(png,"hist2")
+dev.off()
 
 #Mean of the mumber of steps taken each day 
 meanNona <-  aggregate(steps ~ date, data = actNAremoved, FUN = mean)
@@ -80,6 +87,7 @@ for (i in 1:length(actNAremoved$date)){
 library(lattice)
 naAgg <- aggregate(steps ~ interval + WeekDayEnd, data = actNAremoved, FUN = mean)
 xyplot(naAgg$steps ~ naAgg$interval | naAgg$WeekDayEnd,layout = c(1,2),type = "l")
+dev.copy(png,"plot2")
 
 ```{r pressure, echo= T } 
 ```
